@@ -1,13 +1,17 @@
 package main
 
 import (
-	"github.com/desertbit/grumble"
-	"tcssh/cmd"
+	"tcssh/db"
 	"tcssh/util/config"
 )
 
 func main() {
-	config.Init()
-	app := cmd.NewApp()
-	grumble.Main(app)
+	Init()
+	//app := cmd.NewApp()
+	//grumble.Main(app)
+}
+
+func Init() {
+	config.InitWorkPath()
+	db.InitDB()
 }

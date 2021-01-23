@@ -3,10 +3,15 @@ package db
 import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"path"
+	"tcssh/util/config"
 )
 
+const dbFileName = "tcssh.conf"
+
 func newSQlite() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	dsn := path.Join(config.WorkPath, dbFileName)
+	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
