@@ -13,6 +13,7 @@ func main() {
 	grumble.Main(app)
 }
 
+// Init init config and db
 func Init() {
 	config.InitWorkPath()
 	db.InitDB()

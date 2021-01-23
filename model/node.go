@@ -2,6 +2,8 @@ package model
 
 import "time"
 
+const NodeTableName =  "nodes"
+
 type Node struct {
 	ID        int       `gorm:"column:id;primaryKey;autoIncrement"`
 	GroupID   int       `gorm:"column:group_id;index"`
@@ -12,4 +14,8 @@ type Node struct {
 	Port      int       `gorm:"column:port"`
 	CreatedAt time.Time `gorm:"column:create_at"`
 	UpdatedAt time.Time `gorm:"column:update_at"`
+}
+
+func (n *Node) TableName() string {
+	return NodeTableName
 }

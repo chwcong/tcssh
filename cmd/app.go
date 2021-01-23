@@ -17,9 +17,6 @@ func NewApp() (app *grumble.App) {
 		HelpHeadlineColor:     color.New(color.FgGreen),
 		HelpHeadlineUnderline: true,
 		HelpSubCommands:       true,
-
-		Flags: func(f *grumble.Flags) {
-		},
 	})
 	app.AddCommand(lsCmd)
 	return app
