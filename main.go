@@ -16,5 +16,6 @@ func main() {
 // Init init config and db
 func Init() {
 	config.InitWorkPath()
+	config.InitGlobalLocation()
 	db.InitDB()
 }
