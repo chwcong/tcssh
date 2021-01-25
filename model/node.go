@@ -6,8 +6,8 @@ const NodeTableName = "nodes"
 
 type Node struct {
 	ID          int       `gorm:"column:id;primaryKey;autoIncrement"`
-	GroupID     int       `gorm:"column:group_id;index:group_idx;uniqueIndex:group_node_name_idx"`
-	Name        string    `gorm:"column:name;index:node_name_idx;uniqueIndex:group_node_name_idx"`
+	DentryID     int       `gorm:"column:dentry_id;index:dentry_id"`
+	Name        string    `gorm:"column:name"`
 	Ip          string    `gorm:"column:ip"`
 	UserName    string    `gorm:"column:user_name"`
 	Password    string    `gorm:"column:password"`

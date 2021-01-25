@@ -21,7 +21,7 @@ func newDB() {
 
 func InitDB() {
 	newDB()
-	err := DB.AutoMigrate(&model.Group{})
+	err := DB.AutoMigrate(&model.Dentry{})
 	if err != nil {
 		log.Println(err)
 	}

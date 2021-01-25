@@ -8,10 +8,11 @@ import (
 var cdCmd = &grumble.Command{
 	Name: "cd",
 	Help: "cd change current group",
-	Flags: func(f *grumble.Flags) {
+	Args: func(a *grumble.Args) {
+		a.String("group", "group name")
 	},
 	Run: func(c *grumble.Context) error {
-		h := handler.NewLsHandler()
+		h := handler.NewCdHandler()
 		err := h.Handle(c)
 		return err
 	},

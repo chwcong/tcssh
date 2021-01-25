@@ -7,40 +7,57 @@ import (
 	"tcssh/db"
 	"tcssh/model"
 	"tcssh/util/config"
+	constant "tcssh/util/const"
 )
 
 var (
-	once sync.Once
-	h    Handler
+	lsOnce sync.Once
+	lsHan    Handler
 )
 
 type lsHandler struct {
 	location *config.CurrentLocation
-	color *color.Color
+	printer  *printer
 }
 
 func NewLsHandler() Handler {
-	once.Do(func() {
-		h = &lsHandler{
+	lsOnce.Do(func() {
+		lsHan = &lsHandler{
 			location: config.GlobalLocation,
-			color: color.New(color.FgBlue),
+			printer:  initPrinter(),
 		}
 	})
-	return h
+	return lsHan
 }
 
 func (h *lsHandler) Handle(c *grumble.Context) (err error) {
-	groups := model.GetGroupByParentID(db.DB,h.location.GetLocation())
-	h.printGroup(c,groups)
+	groups := model.GetDentryByParentID(db.DB, h.location.GetLocation())
+	h.printDentry(c, groups)
 	return
 }
 
-func (h *lsHandler)printGroup(c *grumble.Context,groups []model.Group) {
+func (h *lsHandler) printDentry(c *grumble.Context, dentrys []model.Dentry) {
 	nameString := ""
-	var names []string
-	for i:=0;i< len(groups);i++ {
-		names = append(names,groups[i].Name)
-		nameString = nameString + h.color.Sprint(groups[i].Name) +"\t"
+	for i := 0; i < len(dentrys); i++ {
+		nameString = nameString + h.printer.sPrintColor(dentrys[i].Type,dentrys[i].Name) + "\t"
 	}
 	c.App.Println(nameString)
+}
+
+type printer struct {
+	typeColor map[string]*color.Color
+}
+
+
+func initPrinter() *printer {
+	p := &printer{
+		typeColor: make(map[string]*color.Color),
+	}
+	p.typeColor[constant.DENTRY_TYPE_NODE] = color.New(color.FgWhite)
+	p.typeColor[constant.DENTRY_TYPE_GROUP] = color.New(color.FgBlue)
+	return p
+}
+
+func (p printer)sPrintColor(dentryType,content string) string {
+	return p.typeColor[dentryType].Sprint(content)
 }

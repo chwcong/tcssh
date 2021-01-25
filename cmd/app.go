@@ -19,5 +19,6 @@ func NewApp() (app *grumble.App) {
 		HelpSubCommands:       true,
 	})
 	app.AddCommand(lsCmd)
+	app.AddCommand(cdCmd)
 	return app
 }
