@@ -31,3 +31,10 @@ func GetDentryIdByNameAndParentID(db *gorm.DB,name string, parentId int) (dentry
 	err = db.Table(DentryTableName).Where("name = ? and parent_id = ?",name, parentId).First(&dentry).Error
 	return
 }
+
+func CreateDentry(db *gorm.DB,dentry *Dentry) (err error) {
+	dentry.CreatedAt = time.Now()
+	dentry.UpdatedAt = time.Now()
+	err = db.Table(DentryTableName).Create(&dentry).Error
+	return
+}
