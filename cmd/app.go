@@ -21,5 +21,6 @@ func NewApp() (app *grumble.App) {
 	app.AddCommand(lsCmd)
 	app.AddCommand(cdCmd)
 	app.AddCommand(mkdirCmd)
+	app.AddCommand(rmCmd)
 	return app
 }
