@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 const NodeTableName = "nodes"
 
@@ -19,4 +22,14 @@ type Node struct {
 
 func (n *Node) TableName() string {
 	return NodeTableName
+}
+
+// DeleteNodeById delete one
+func DeleteNodeById(db *gorm.DB,id int) error {
+	return db.Table(NodeTableName).Delete(&Node{},id).Error
+}
+
+// DeleteNodeByIds batch delete
+func DeleteNodesByIds(db *gorm.DB,ids []int) error {
+	return db.Table(NodeTableName).Delete(&Node{},ids).Error
 }

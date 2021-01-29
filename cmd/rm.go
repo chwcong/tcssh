@@ -10,6 +10,9 @@ var rmCmd = &grumble.Command{
 	Help: "remove dentry.if remove a group,all nodes and groups of this group will be remove",
 	Flags: func(f *grumble.Flags) {
 	},
+	Args: func(a *grumble.Args) {
+		a.String("dentry", "dentry name")
+	},
 	Run: func(c *grumble.Context) error {
 		h := handler.NewRmHandler()
 		err := h.Handle(c)

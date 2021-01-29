@@ -22,6 +22,28 @@ func (g *Dentry) TableName() string {
 	return DentryTableName
 }
 
+func GetAllChildDentryByParentId(db *gorm.DB,id int) (dentrys []Dentry,err error)  {
+	sql := `with recursive
+    d as (
+        select * from dentrys where dentrys.id = ?
+        union all
+        select  dentrys.* from d join dentrys on dentrys.parent_id = d.id
+    )
+SELECT * FROM d;`
+	err = db.Table(DentryTableName).Raw(sql,id).Scan(&dentrys).Error
+	return
+}
+
+// DeleteDentryByIds delete one
+func DeleteDentryById(db *gorm.DB,id int) error {
+	return db.Table(DentryTableName).Delete(&Dentry{},id).Error
+}
+
+// DeleteDentryByIds batch delete
+func DeleteDentryByIds(db *gorm.DB,ids []int) error {
+	return db.Table(DentryTableName).Delete(&Dentry{},ids).Error
+}
+
 func GetDentryByParentID(db *gorm.DB, parentId int) (dentrys []Dentry) {
 	db.Table(DentryTableName).Where("parent_id = ?", parentId).Find(&dentrys)
 	return
