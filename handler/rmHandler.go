@@ -47,18 +47,18 @@ func (h *rmHandler) Handle(c *grumble.Context) (err error) {
 	if len(nodesToDel) > 0 {
 		err = model.DeleteNodesByIds(tx,nodesToDel)
 		if err != nil {
+			tx.Rollback()
 			return pkgerr.Wrap(err,"delete nodes err ")
 		}
-		tx.Rollback()
 	}
 	if len(dentrysToDel) > 0 {
 		err = model.DeleteDentryByIds(tx,dentrysToDel)
 		if err != nil {
+			tx.Rollback()
 			return pkgerr.Wrap(err,"delete dentrys err ")
 		}
-		tx.Rollback()
 	}
-	db.DB.Commit()
+	err = tx.Commit().Error
 	return
 }
 

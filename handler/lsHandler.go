@@ -39,7 +39,7 @@ func (h *lsHandler) Handle(c *grumble.Context) (err error) {
 func (h *lsHandler) printDentry(c *grumble.Context, dentrys []model.Dentry) {
 	nameString := ""
 	for i := 0; i < len(dentrys); i++ {
-		nameString = nameString + h.printer.sPrintColor(dentrys[i].Type,dentrys[i].Name) + "\t"
+		nameString = nameString + h.printer.sPrintColor(dentrys[i].Type,dentrys[i].Name) + "  "
 	}
 	c.App.Println(nameString)
 }
@@ -55,9 +55,15 @@ func initPrinter() *printer {
 	}
 	p.typeColor[constant.DENTRY_TYPE_NODE] = color.New(color.FgWhite)
 	p.typeColor[constant.DENTRY_TYPE_GROUP] = color.New(color.FgBlue)
+	p.typeColor["default"] = color.New(color.FgWhite)
 	return p
 }
 
 func (p printer)sPrintColor(dentryType,content string) string {
-	return p.typeColor[dentryType].Sprint(content)
+	var colorPrinter *color.Color
+	colorPrinter,ok := p.typeColor[dentryType]
+	if !ok {
+		colorPrinter = p.typeColor["default"]
+	}
+	return colorPrinter.Sprint(content)
 }

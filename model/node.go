@@ -33,3 +33,10 @@ func DeleteNodeById(db *gorm.DB,id int) error {
 func DeleteNodesByIds(db *gorm.DB,ids []int) error {
 	return db.Table(NodeTableName).Delete(&Node{},ids).Error
 }
+
+func CreateNode(db *gorm.DB,node *Node) (err error) {
+	node.CreatedAt = time.Now()
+	node.UpdatedAt = time.Now()
+	err = db.Table(NodeTableName).Create(&node).Error
+	return
+}
