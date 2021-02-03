@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"github.com/desertbit/grumble"
 	pkgerr "github.com/pkg/errors"
 	"os/user"
@@ -121,6 +122,8 @@ func tryGetPasswd(c *client.SSHClient) (string,error)  {
 		isPassRight := c.Test()
 		if isPassRight {
 			return string(pass),nil
+		} else {
+			fmt.Println("Auth error!Please try again")
 		}
 	}
 	return "", errors.New("max try to connect to the host")
