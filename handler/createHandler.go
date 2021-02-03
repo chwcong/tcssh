@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"github.com/desertbit/grumble"
 	pkgerr "github.com/pkg/errors"
 	"os/user"
@@ -11,6 +12,7 @@ import (
 	"tcssh/util/config"
 	constant "tcssh/util/const"
 	"tcssh/util/passwd"
+	client "tcssh/util/sshClient"
 	"time"
 )
 
@@ -41,7 +43,14 @@ func (c *createHandler) Handle(ctx *grumble.Context) (err error) {
 	if hostName == "" {
 		hostName = ip
 	}
-	pass, err := passwd.GetPasswd()
+	ctx.App.Println("Please input the passwd")
+	sshClient := &client.SSHClient{
+		Ip:     ip,
+		Port:   port,
+		Passwd: "",
+		User:   userName,
+	}
+	pass, err := tryGetPasswd(sshClient)
 	if err != nil {
 		return pkgerr.Wrap(err, "get passwd err")
 	}
@@ -51,7 +60,7 @@ func (c *createHandler) Handle(ctx *grumble.Context) (err error) {
 		Name:        hostName,
 		Ip:          ip,
 		UserName:    userName,
-		Password:    string(pass),
+		Password:    pass,
 		Port:        port,
 		Description: description,
 		CreatedAt:   time.Now(),
@@ -99,4 +108,20 @@ func getCurrentUser() string {
 		return ""
 	}
 	return u.Name
+}
+
+func tryGetPasswd(c *client.SSHClient) (string,error)  {
+	maxTry := 3
+	for i:=0;i<maxTry;i++ {
+		pass, err := passwd.GetPasswd()
+		if err != nil {
+			return "", err
+		}
+		c.Passwd = string(pass)
+		isPassRight := c.Test()
+		if isPassRight {
+			return string(pass),nil
+		}
+	}
+	return "", errors.New("max try to connect to the host")
 }

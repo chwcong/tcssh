@@ -33,6 +33,7 @@ func (h *cdHandler) Handle(c *grumble.Context)  error {
 	if name == "" {
 		return errors.New("please input group name")
 	}
+	// TODO handle . and ..
 	dentry,err := model.GetDentryIdByNameAndParentID(db.DB,name, h.location.GetLocation())
 	if err != nil {
 		return err
