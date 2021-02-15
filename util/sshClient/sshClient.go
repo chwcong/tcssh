@@ -1,11 +1,15 @@
 package sshClient
 
 import (
+	"bufio"
 	"fmt"
+	"github.com/pkg/errors"
 	"golang.org/x/crypto/ssh"
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"strings"
 )
 
 type SSHClient struct {
@@ -39,14 +43,50 @@ func (c *SSHClient)Test() bool {
 
 
 func (c *SSHClient)ConnectByOSCmd() error {
-	cmdStr := fmt.Sprintf("ssh %s@%s",c.User,c.Ip)
+	cmdStr := fmt.Sprintf("%s@%s",c.User,c.Ip)
 	if c.Port != 22 {
 		cmdStr = cmdStr + fmt.Sprintf(" -p %d",c.Port)
+	} else {
+		cmdStr = cmdStr + fmt.Sprintf(" -p %d",22)
 	}
-	cmd := exec.Command(cmdStr)
+	cmd := exec.Command("ssh",cmdStr)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
-	err := cmd.Wait()
+	err := cmd.Start()
+	if err != nil {
+		return err
+	}
+	err = cmd.Wait()
 	return err
 }
 
+
+func getHostKey(host string) (ssh.PublicKey, error) {
+	file, err := os.Open(filepath.Join(os.Getenv("HOME"), ".ssh", "known_hosts"))
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	var hostKey ssh.PublicKey
+	for scanner.Scan() {
+		fields := strings.Split(scanner.Text(), " ")
+		if len(fields) != 3 {
+			continue
+		}
+		if strings.Contains(fields[0], host) {
+			var err error
+			hostKey, _, _, _, err = ssh.ParseAuthorizedKey(scanner.Bytes())
+			if err != nil {
+				return nil, errors.New(fmt.Sprintf("error parsing %q: %v", fields[2], err))
+			}
+			break
+		}
+	}
+
+	if hostKey == nil {
+		return nil, errors.New(fmt.Sprintf("no hostkey for %s", host))
+	}
+	return hostKey, nil
+}
