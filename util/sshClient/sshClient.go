@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"golang.org/x/crypto/ssh"
 	"log"
+	"os"
+	"os/exec"
 )
 
 type SSHClient struct {
@@ -34,3 +36,17 @@ func (c *SSHClient)Test() bool {
 	defer client.Close()
 	return true
 }
+
+
+func (c *SSHClient)ConnectByOSCmd() error {
+	cmdStr := fmt.Sprintf("ssh %s@%s",c.User,c.Ip)
+	if c.Port != 22 {
+		cmdStr = cmdStr + fmt.Sprintf(" -p %d",c.Port)
+	}
+	cmd := exec.Command(cmdStr)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	err := cmd.Wait()
+	return err
+}
+

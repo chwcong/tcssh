@@ -23,5 +23,6 @@ func NewApp() (app *grumble.App) {
 	app.AddCommand(mkdirCmd)
 	app.AddCommand(rmCmd)
 	app.AddCommand(createCmd)
+	app.AddCommand(sshCmd)
 	return app
 }

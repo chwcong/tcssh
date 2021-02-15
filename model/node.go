@@ -40,3 +40,8 @@ func CreateNode(db *gorm.DB,node *Node) (err error) {
 	err = db.Table(NodeTableName).Create(&node).Error
 	return
 }
+
+func GetNodeOfCurrentIdByName(db *gorm.DB,id int,name string) (node *Node,err error) {
+	err = db.Table(NodeTableName).Where("name = ? and dentry_id = ?",name, id).First(&node).Error
+	return
+}
